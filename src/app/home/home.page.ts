@@ -16,9 +16,11 @@ export class HomePage {
     years: "Yearly"
   }; 
   range:number = 5;
-  label = this.quotes["days"];
+  value = this.quotes["days"];
   constructor() {
     console.log(this.quotesKeys(this.quotes)[3]);
   }
-
+  getKey(value){
+    return this.quotesKeys(this.quotes).find(k=>this.quotes[k]==this.value);
+  }
 }

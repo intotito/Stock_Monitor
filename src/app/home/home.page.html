@@ -20,14 +20,14 @@
     </ion-item>
     <ion-item>
       <ion-label >Interval</ion-label>
-      <ion-select [value]="['Daily']">
+      <ion-select  [(ngModel)]="value" [value]="['Daily']">
         <ion-select-option *ngFor="let key of quotesKeys(quotes)">{{quotes[key]}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
       <ion-label>Last</ion-label>
       <ion-input [(ngModel)]="range"></ion-input>
-      <ion-label>{{quotesKeys(quotes)[0]}}</ion-label>
+      <ion-label>{{getKey(value)}}</ion-label>
     </ion-item>
     <ion-item>
 
