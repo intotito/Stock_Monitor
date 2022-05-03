@@ -15,18 +15,23 @@
 
   <div id="container">
     <ion-item>
-      <ion-label>Specify an Equity</ion-label>
+      <ion-label  position="floating">Specify an Equity</ion-label>
       <ion-input placeholder="E.g IBM"></ion-input>
     </ion-item>
-    <ion-button [routerLink]="['/page']" routerDirection="forward">Fetch</ion-button>
     <ion-item>
-      <ion-label>Interval</ion-label>
+      <ion-label >Interval</ion-label>
       <ion-select [value]="['Daily']">
-        <ion-select-option value="Daily">Daily</ion-select-option>
-        <ion-select-option value="Weekly">Weekly</ion-select-option>
-        <ion-select-option value="Monthly">Monthly</ion-select-option>
-        <ion-select-option value="Yearly">Yearly</ion-select-option>
+        <ion-select-option *ngFor="let key of quotesKeys(quotes)">{{quotes[key]}}</ion-select-option>
       </ion-select>
     </ion-item>
+    <ion-item>
+      <ion-label>Last</ion-label>
+      <ion-input [(ngModel)]="range"></ion-input>
+      <ion-label>{{quotesKeys(quotes)[0]}}</ion-label>
+    </ion-item>
+    <ion-item>
+
+    </ion-item>
+    <ion-button [routerLink]="['/page']" routerDirection="forward">Fetch</ion-button>
   </div>
 </ion-content>
