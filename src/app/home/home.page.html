@@ -16,7 +16,7 @@
   <div id="container">
     <ion-item>
       <ion-label  position="floating">Specify an Equity</ion-label>
-      <ion-input placeholder="E.g IBM"></ion-input>
+      <ion-input [(ngModel)]="symbol" placeholder="E.g IBM"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label >Interval</ion-label>
@@ -29,6 +29,7 @@
       <ion-input [(ngModel)]="range"></ion-input>
       <ion-label>{{getKey(value)}}</ion-label>
     </ion-item>
-    <ion-button [routerLink]="['/page']" routerDirection="forward">Fetch</ion-button>
+    <ion-button (click)="showQuotes()">Fetch</ion-button>
+<!--    <ion-button [routerLink]="['/page']" routerDirection="forward">Fetch</ion-button> -->
   </div>
 </ion-content>
