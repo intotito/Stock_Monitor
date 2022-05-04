@@ -28,11 +28,12 @@ export class HomePage {
     console.log(this.quotesKeys(this.quotes)[3]);
   }
   getKey(value){
-    return this.quotesKeys(this.quotes).find(k=>this.quotes[k]==this.value);
+    return this.quotesKeys(this.quotes).find(k=>this.quotes[k]===this.value);
   }
 
   showQuotes(){
-    let a = {interval: this.funxtions[this.value], symbol: this.symbol, duration: this.range};
+    let a = {interval: this.funxtions[this.value], symbol: this.symbol, duration: this.range, index: this.quotesKeys(this.funxtions).indexOf(this.value)};
+    console.log(a);
     this.router.navigate(['/quote-viewer', a]);
   }
 }
