@@ -148,12 +148,17 @@ export class QuoteViewerPage implements OnInit {
 
   // Y axis labels
     ctx.fillStyle = 'white';
+    ctx.textAlign = 'right';
     for(let i = 0; i < gridY / 2; i++){
-      let x: number = 0;
+      let x: number = padding - tickSize / 2;
       let y: number = padding + H - (H / (gridX / 2)) * (i + 1);
       let value: number = range + ((max - range) / H) * (H / (gridX / 2)) * (i + 1);
-      ctx.fillText('' + value, 0, padding + H - (H / (gridX / 2)) * (i + 1));
+//      ctx.fillText('' + value.toPrecision(2), 0, padding + H - (H / (gridX / 2)) * (i + 1));
+      ctx.fillText('' + value.toFixed(2), x, y);
     }
+
+// X axis labels
+    
 
 
 // Graph
