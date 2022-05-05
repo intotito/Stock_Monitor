@@ -83,6 +83,8 @@ export class QuoteViewerPage implements OnInit {
     let H: number = height - 2 * padding;
     let W: number = width - 2 * padding;
 
+    
+
 // X and Y axis
     ctx.beginPath();
     ctx.moveTo(padding, padding);
@@ -98,6 +100,8 @@ export class QuoteViewerPage implements OnInit {
     let max: number = this.getMaximumValue()[1];
     let min: number = this.getMinimumValue()[1];
     let range = min - (max - min) / 8;
+
+    console.log('Maximum = ' + max + '\nMiniumu' + min);
 
     let tickx: number = W / this.cardinality;
     let ticky: number = H / max;
@@ -142,6 +146,15 @@ export class QuoteViewerPage implements OnInit {
     ctx.stroke();
     ctx.closePath();
 
+  // Y axis labels
+    ctx.fillStyle = 'white';
+    for(let i = 0; i < gridY / 2; i++){
+      let x: number = 0;
+      let y: number = padding + H - (H / (gridX / 2)) * (i + 1);
+      let value: number = range + ((max - range) / H) * (H / (gridX / 2)) * (i + 1);
+      ctx.fillText('' + value, 0, padding + H - (H / (gridX / 2)) * (i + 1));
+    }
+
 
 // Graph
     ctx.beginPath();
@@ -151,9 +164,7 @@ export class QuoteViewerPage implements OnInit {
       let date = new Date(Number(datParts[0]), Number(datParts[1]) - 1, Number(datParts[2]));
       let value = this.data[this.dataKeys[i]]['4. close'];
       console.log(value);
-    //  ctx.moveTo(padding + (i) * tickx, padding + (H - ticky * value));
       ctx.lineTo(padding + (i + 1) * tickx, padding + (H - ticky * (value - range)));
-   //   break;
     }
     ctx.strokeStyle = '#FFFF00';
     ctx.lineWidth = 1;
