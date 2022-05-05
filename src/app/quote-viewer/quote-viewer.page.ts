@@ -83,6 +83,7 @@ export class QuoteViewerPage implements OnInit {
     let H: number = height - 2 * padding;
     let W: number = width - 2 * padding;
 
+// X and Y axis
     ctx.beginPath();
     ctx.moveTo(padding, padding);
     ctx.lineTo(padding, height - padding);
@@ -96,29 +97,24 @@ export class QuoteViewerPage implements OnInit {
  
     let max: number = this.getMaximumValue()[1];
     let min: number = this.getMinimumValue()[1];
-
     let range = min - (max - min) / 8;
-    console.log("This is range " + range);
-    console.log("This is the maximum " + max);
-    console.log("This is the miniumum " + min);
- //   ctx.lineWidth = 1;
 
     let tickx: number = W / this.cardinality;
     let ticky: number = H / max;
 
-   // ticky = H / (max - min);
-
     ticky = H / (max - range);
 
-//    ctx.moveTo(padding, padding);
+// X and Y grids
     let gridX = 10;
     let gridY = 10;
 
     ctx.beginPath();
+    // Vertical grid
     for(let i = 0; i < gridY; i++){
       ctx.moveTo(padding + (W / gridY) * (i + 1), padding + H);
       ctx.lineTo(padding + (W / gridY) * (i + 1), padding); 
     }
+    // Horizontal grid
     for(let i = 0; i < gridX; i++){
       ctx.moveTo(padding, padding + H - (H / gridX) * (i + 1));
       ctx.lineTo(padding + W, padding + H - (H / gridX) * (i + 1)); 
@@ -128,7 +124,26 @@ export class QuoteViewerPage implements OnInit {
     ctx.stroke();
     ctx.closePath();
 
+// X and Y axis ticks
+    let tickSize = 10;
+    ctx.beginPath();
+    // Vertical Tick
+    for(let i = 0; i < gridY / 2; i++){
+      ctx.moveTo(padding + (W / (gridY / 2)) * (i + 1), padding + H + tickSize / 2);
+      ctx.lineTo(padding + (W / (gridY / 2)) * (i + 1), padding + H - tickSize / 2);
+    }
+    // Horizontal Tick
+    for(let i = 0; i < gridX / 2; i++){
+      ctx.moveTo(padding - tickSize / 2, padding + H - (H / (gridX / 2)) * (i + 1));
+      ctx.lineTo(padding + tickSize / 2, padding + H - (H / (gridX / 2)) * (i + 1));
+    }
+    ctx.strokeStyle = '#0000FF'
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+    ctx.closePath();
 
+
+// Graph
     ctx.beginPath();
     ctx.moveTo(padding + (1) * tickx, padding + (H - ticky * (this.data[this.dataKeys[0]]['4. close'] - range)));
     for(let i = 1; i < this.cardinality; i++){
