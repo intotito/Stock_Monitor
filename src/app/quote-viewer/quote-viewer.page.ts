@@ -1,5 +1,5 @@
 import { Component, ComponentFactoryResolver, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { QuoteGetterService } from '../Service/quote-getter.service';
 
@@ -11,7 +11,7 @@ import { QuoteGetterService } from '../Service/quote-getter.service';
 export class QuoteViewerPage implements OnInit {
   interval: string;
   symbol: string;
-  duration:  string;
+  duration: number;
   index: number;
   data: any;
   dataKeys: string[];
@@ -26,8 +26,10 @@ export class QuoteViewerPage implements OnInit {
   constructor(private route: ActivatedRoute, private quoteGetter: QuoteGetterService, private platform: Platform) { 
     this.interval = this.route.snapshot.paramMap.get('interval');
     this.symbol = this.route.snapshot.paramMap.get('symbol');
-    this.duration = this.route.snapshot.paramMap.get('duration');
+    this.duration = Number(this.route.snapshot.paramMap.get('duration'));
     this.index = Number(this.route.snapshot.paramMap.get('index'));
+    this.cardinality = this.duration;
+ //   this.cardinality = Math.min(5, this.cardinality);
     console.log("Check  this " + this.interval + " -- " + this.symbol + " --" + this.duration);
   }
 
@@ -109,8 +111,10 @@ export class QuoteViewerPage implements OnInit {
     ticky = H / (max - range);
 
 // X and Y grids
-    let gridX = 10;
-    let gridY = 10;
+    let gridX = this.cardinality / 2;
+    let gridY = this.cardinality / 2;
+    gridX = gridX > 20 ? 20 : gridX;
+    gridY = gridY > 20 ? 20 : gridY;
 
     ctx.beginPath();
     // Vertical grid
@@ -149,6 +153,7 @@ export class QuoteViewerPage implements OnInit {
   // Y axis labels
     ctx.fillStyle = 'white';
     ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
     for(let i = 0; i < gridY / 2; i++){
       let x: number = padding - tickSize / 2;
       let y: number = padding + H - (H / (gridX / 2)) * (i + 1);
@@ -158,23 +163,57 @@ export class QuoteViewerPage implements OnInit {
     }
 
 // X axis labels
+    ctx.fillStyle = 'white';
     
+    let tempMonth: number = Number(this.dataKeys[0].split('-')[1]) - 1;
+    for(let i = (gridX / 2); i > 0; i--){
+      let x = padding + (W / (gridX / 2) * (gridX / 2 - i));
+      let dateParts = this.dataKeys[Math.floor(this.cardinality / (gridX / 2)) * (i) - 1].split('-');
+      let date = new Date(Number(dateParts[0]), Number(dateParts[1]) - 1, Number(dateParts[2]));
+      let value = this.data[this.dataKeys[Math.floor(this.cardinality / (gridX / 2)) * (i) - 1]]['4. close'];
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      console.log("Date: " + date.getDate() + " index: " + this.index + " i: " + i);
+      if(this.index < 2){ // Daily and Weekly Series
+        ctx.fillText("" + date.getDate(), x, padding + H + tickSize / 2);
+        if(i == 0 || date.getMonth() != tempMonth){
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'bottom';
+          ctx.fillText(this.getMonth(date.getMonth()), x, padding + H + padding - tickSize / 2);
+        }
+      } else {// Monthly Series
+        ctx.fillText((date.getMonth() + 1).toString(), x, padding + H + tickSize / 2);
+        if(i == 0 || date.getMonth() != tempMonth){
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'bottom';
+       //   ctx.fillText(this.getMonth(date.getMonth()), x, padding + H + padding - tickSize / 2);
+        }
+      } 
+      tempMonth = date.getMonth();
+    }
 
 
 // Graph
     ctx.beginPath();
-    ctx.moveTo(padding + (1) * tickx, padding + (H - ticky * (this.data[this.dataKeys[0]]['4. close'] - range)));
-    for(let i = 1; i < this.cardinality; i++){
+    ctx.moveTo(padding + (0) * tickx, padding + (H - ticky * (this.data[this.dataKeys[this.cardinality - 1]]['4. close'] - range)));
+//    for(let i = 1; i < this.cardinality; i++){
+    for(let i = (this.cardinality - 1); i > 0; i--){
       let datParts = this.dataKeys[i].split('-');
       let date = new Date(Number(datParts[0]), Number(datParts[1]) - 1, Number(datParts[2]));
       let value = this.data[this.dataKeys[i]]['4. close'];
       console.log(value);
-      ctx.lineTo(padding + (i + 1) * tickx, padding + (H - ticky * (value - range)));
+      //ctx.lineTo(padding + (i + 1) * tickx, padding + (H - ticky * (value - range)));
+      ctx.lineTo(padding + (this.cardinality - i) * tickx, padding + (H - ticky * (value - range)));
     }
     ctx.strokeStyle = '#FFFF00';
     ctx.lineWidth = 1;
     ctx.stroke();
     ctx.closePath();
+  }
+
+  getMonth(month: number): string{
+    let months: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[month];
   }
 
 }
